@@ -13,8 +13,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 public class Colocviu1_2MainActivity extends AppCompatActivity implements View.OnClickListener{
 
+    static class rem {
+        public static int sum = 0;
+        public static String prev = "";
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +39,7 @@ public class Colocviu1_2MainActivity extends AppCompatActivity implements View.O
                 if (resultCode == 33) {
                     Bundle data = intent.getExtras();
                     Toast.makeText(getApplication(), data.get("ret").toString(), Toast.LENGTH_LONG).show();
+                    rem.sum = Integer.valueOf(data.get("ret").toString());
                 }
                 break;
 
@@ -58,9 +64,14 @@ public class Colocviu1_2MainActivity extends AppCompatActivity implements View.O
                 }
                 break;
             case R.id.compute:
-                Intent intent = new Intent(getApplicationContext(), Colocviu1_2SecondaryActivity.class);
-                intent.putExtra("key", ((TextView)findViewById(R.id.allTerms)).getText().toString());
-                startActivityForResult(intent, 33);
+                if (rem.prev.equals(((TextView)findViewById(R.id.allTerms)).getText().toString())) {
+                    Log.d("eim", "intru aici");
+                    Toast.makeText(getApplication(), rem.sum, Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), Colocviu1_2SecondaryActivity.class);
+                    intent.putExtra("key", ((TextView) findViewById(R.id.allTerms)).getText().toString());
+                    startActivityForResult(intent, 33);
+                }
                 break;
         }
     }
@@ -69,6 +80,7 @@ public class Colocviu1_2MainActivity extends AppCompatActivity implements View.O
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putString("all", ((TextView)findViewById(R.id.allTerms)).getText().toString());
+        savedInstanceState.putString("sum", String.valueOf(rem.sum));
     }
 
     @Override
@@ -76,6 +88,8 @@ public class Colocviu1_2MainActivity extends AppCompatActivity implements View.O
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState.containsKey("all")) {
             ((TextView)findViewById(R.id.allTerms)).setText(savedInstanceState.getString( "all"));
+            rem.sum = Integer.valueOf(savedInstanceState.getString( "sum"));
+            rem.prev = savedInstanceState.getString( "all");
         }
     }
 }
